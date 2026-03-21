@@ -1,4 +1,7 @@
+#![cfg(not(miri))]
+
 use std::net::TcpListener;
+
 
 #[tokio::test]
 async fn health_check_regression() {
