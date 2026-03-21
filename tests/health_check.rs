@@ -2,7 +2,6 @@
 
 use std::net::TcpListener;
 
-
 #[tokio::test]
 async fn health_check_regression() {
     let address = spawn_app();
