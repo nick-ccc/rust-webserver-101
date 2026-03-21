@@ -1,13 +1,12 @@
 use std::net::TcpListener;
 
-
 #[tokio::test]
 async fn health_check_regression() {
     let address = spawn_app();
     let client = reqwest::Client::new();
 
     let response = client
-        .get(&format!("{}/health_check", &address))
+        .get(format!("{}/health_check", &address))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -20,6 +19,6 @@ fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("failed random port bind");
     let port = listener.local_addr().unwrap().port();
     let server = trsws::run(listener).expect("Failed to bind address");
-    let _ = tokio::spawn(server);
+    std::mem::drop(tokio::spawn(server));
     format!("http://127.0.0.1:{}", port)
 }
