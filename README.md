@@ -1,4 +1,4 @@
-<h1 align="center">RUST-NIX Teamplate Project</h1>
+<h1 align="center">RUST Testing Webserver</h1>
 <p align="center">
   <a href="https://rustacean.net/">
     <img 
@@ -11,19 +11,13 @@
 
 
 <p align="center">
-  <a href="(https://github.com/nick-ccc/rust-nix-template/actions/workflows/rust.yaml">
-    <img src="https://github.com/nick-ccc/rust-nix-template/actions/workflows/rust.yaml/badge.svg" alt="website"/>
+  <a href="(https://github.com/nick-ccc/test-rust-webserver/actions/workflows/rust.yaml">
+    <img src="https://github.com/nick-ccc/test-rust-webserver/actions/workflows/rust.yaml/badge.svg" alt="website"/>
   </a>
-  <a href="https://codecov.io/gh/nick-ccc/rust-nix-template">
-    <img src="https://codecov.io/gh/nick-ccc/rust-nix-template/branch/main/graph/badge.svg" alt="website"/>
+  <a href="https://codecov.io/gh/nick-ccc/test-rust-webserver">
+    <img src="https://codecov.io/gh/nick-ccc/test-rust-webserver/branch/main/graph/badge.svg" alt="website"/>
   </a>
   
 </p>
 
-
-# Provides
-- Basic CI for testing (github actions)
-- prehook for running formatting and linting
-- Nix Flake for simple rust installation and useful packages
-- Makefile for running common cargo commands
 

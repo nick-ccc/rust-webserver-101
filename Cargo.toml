@@ -1,6 +1,19 @@
 [package]
-name = "rust-nix-template"
+name = "trsws"
 version = "0.1.0"
+authors = ["nick-ccc"]
 edition = "2024"
 
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "trsws"
+
 [dependencies]
+actix-web = "^4.13.0"
+tokio = {version = "1", features = ["macros", "rt-multi-thread"]}
+
+[dev-dependencies]
+reqwest = "0.13"
