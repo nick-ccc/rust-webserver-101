@@ -11,6 +11,18 @@ async fn health_check() -> impl Responder {
     HttpResponse::Ok()
 }
 
+
+#[allow(dead_code)]
+#[derive(serde::Deserialize)]
+struct FormData {
+    email: String,
+    name: String,
+}
+
+async fn subscribe(_form: web::Form<FormData>) -> impl Responder {
+    HttpResponse::Ok().finish()
+}
+
 // mark run as public for
 // exposure
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
@@ -19,6 +31,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
             .route("/", web::get().to(greet))
             .route("/health_check", web::get().to(health_check))
             .route("/{name}", web::get().to(greet))
+            .route("/subscriptions", web::post().to(subscribe))
     })
     .listen(listener)?
     .run();
