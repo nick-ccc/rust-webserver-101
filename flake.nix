@@ -24,6 +24,10 @@
         cargo-tarpaulin
         cargo-audit
 
+        # For secrets
+        glib.dev
+        libsecret.dev
+
 	#psql
 	sqlx-cli
 	postgresql
