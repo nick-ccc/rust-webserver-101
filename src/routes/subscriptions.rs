@@ -1,10 +1,9 @@
-use sqlx::{Executor, PgPool, Postgres, Transaction};
-use actix_web::{HttpResponse, ResponseError, web};
 use actix_web::http::StatusCode;
-use chrono::Utc;
-use uuid::Uuid;
+use actix_web::{HttpResponse, ResponseError, web};
 use anyhow::Context;
-
+use chrono::Utc;
+use sqlx::{Executor, PgPool, Postgres, Transaction};
+use uuid::Uuid;
 
 pub fn error_chain_fmt(
     e: &impl std::error::Error,
@@ -24,7 +23,6 @@ pub struct FormData {
     email: String,
     name: String,
 }
-
 
 #[derive(thiserror::Error)]
 pub enum SubscribeError {
@@ -49,9 +47,17 @@ impl ResponseError for SubscribeError {
     }
 }
 
+#[tracing::instrument(
+    name = "Adding a new subscriber",
+    skip(form, pool),
+    fields(
+        subscriber_email = %form.email,
+        subscriber_name = %form.name
+    )
+)]
 pub async fn subscribe(
     form: web::Form<FormData>,
-    pool: web::Data<PgPool>
+    pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, SubscribeError> {
     let mut transaction = pool
         .begin()
@@ -62,9 +68,12 @@ pub async fn subscribe(
         .context("Failed to insert new subscriber into database")?;
     transaction.commit().await.unwrap(); // todo!
     Ok(HttpResponse::Ok().finish())
-
 }
 
+#[tracing::instrument(
+    name = "Saving new subscriber details in the database",
+    skip(form, transaction)
+)]
 pub async fn insert_subscriber(
     form: web::Form<FormData>,
     transaction: &mut Transaction<'_, Postgres>,
@@ -79,9 +88,15 @@ pub async fn insert_subscriber(
         form.email,
         form.name,
         Utc::now(),
-    ); 
-    transaction.execute(query).await?;
+    );
+    transaction.execute(query)
+        .await
+        .map_err(|e| {
+            // if there is duplicate key this throws err -> could be better 
+            // to redo as warn
+            tracing::error!("Failed to execute query: {:?}", e);
+            e
+        })?;
 
     Ok(subscriber_id)
 }
-

@@ -1,7 +1,7 @@
 // #[tokio::test]
 // async fn health_check_regression() {
 //     let address = spawn_app().await;
-//     
+//
 //     let response = client
 //         .get(format!("{}/health_check", &address))
 //         .send()

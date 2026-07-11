@@ -1,10 +1,12 @@
+use env_logger::Env;
 use std::fmt::{Debug, Display};
 use tokio::task::JoinError;
-
 use trsws::{configuration::get_configuration, startup::Application};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+
     let configuration = get_configuration().expect("FAILED to read configuration file");
     let application = Application::build(configuration.clone()).await?;
     let application_task = tokio::spawn(application.run_until_stopped());
@@ -13,7 +15,7 @@ async fn main() -> anyhow::Result<()> {
         o = application_task => report_exit("API", o),
         // o = worker_task =>  report_exit("Background worker", o),
     };
-    
+
     Ok(())
 }
 

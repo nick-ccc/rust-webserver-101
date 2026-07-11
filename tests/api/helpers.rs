@@ -1,15 +1,31 @@
-use trsws::configuration::{DatabaseSettings, get_configuration};
-use trsws::startup::{Application};
-use sqlx::{PgConnection, Connection, Executor};
+use std::sync::LazyLock;
+
 use sqlx::PgPool;
+use sqlx::{Connection, Executor, PgConnection};
+use trsws::configuration::{DatabaseSettings, get_configuration};
+use trsws::startup::Application;
+use trsws::telemetry::{get_subscriber, init_subscriber};
 use uuid::Uuid;
 
+// ensure tracing stack is initialized only once
+static TRACING: LazyLock<()> = LazyLock::new(|| {
+    let default_filter_level = "info".to_string();
+    let subscriber_name = "test".to_string();
+    if std::env::var("TEST_LOG").is_ok() {
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::stdout);
+        init_subscriber(subscriber);
+    } else {
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::sink);
+        init_subscriber(subscriber);
+    }
+});
+
 pub struct TestApp {
-    pub address: String, 
+    pub address: String,
     pub port: u16,
     pub db_pool: PgPool,
     pub api_client: reqwest::Client,
-}
+} 
 
 impl TestApp {
     pub async fn post_subscriptions(&self, body: String) -> reqwest::Response {
@@ -24,6 +40,8 @@ impl TestApp {
 }
 
 pub async fn spawn_app() -> TestApp {
+    LazyLock::force(&TRACING);
+
     let configuration = {
         let mut c = get_configuration().expect("Failed to read configuration");
         c.database.database_name = Uuid::new_v4().to_string();
@@ -45,12 +63,11 @@ pub async fn spawn_app() -> TestApp {
         address: format!("http://localhost:{}", application_port),
         port: application_port,
         db_pool: pool,
-        api_client: client
+        api_client: client,
     }
 }
 
-
-async fn configure_database(config: &DatabaseSettings) ->PgPool {
+async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let maintenance_settings = DatabaseSettings {
         database_name: "postgres".to_string(),
         username: "postgres".to_string(),

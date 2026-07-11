@@ -1,5 +1,5 @@
-use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use serde_aux::field_attributes::deserialize_number_from_string;
+use sqlx::postgres::{PgConnectOptions, PgSslMode};
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Settings {
