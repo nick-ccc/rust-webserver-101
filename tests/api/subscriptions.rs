@@ -1,13 +1,11 @@
-mod helpers;
-
-use helpers::spawn_app;
+use crate::helpers::spawn_app;
 use sqlx;
 
 #[tokio::test]
 async fn subscribe_returns_a_200_for_valid_form_data() {
     let app = spawn_app().await;
 
-    let body = "name=nick%20ccc&email=notreal%40mydomain.com";
+    let body = "name=nick-ccc&email=notreal%40mydomain.com";
     let response = app.post_subscriptions(body.into()).await;
         
     assert_eq!(200, response.status().as_u16());

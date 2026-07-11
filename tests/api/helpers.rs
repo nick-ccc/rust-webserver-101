@@ -1,5 +1,5 @@
 use trsws::configuration::{DatabaseSettings, get_configuration};
-use trsws::startup::{Application, get_connection_pool};
+use trsws::startup::{Application};
 use sqlx::{PgConnection, Connection, Executor};
 use sqlx::PgPool;
 use uuid::Uuid;
