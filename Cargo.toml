@@ -35,7 +35,8 @@ tracing-subscriber = {version = "0.3.23",  features = ["registry", "env-filter"]
 tracing-bunyan-formatter = "0.3.10"
 once_cell = "1.21.4"
 tracing-log = "0.2.0"
-secrecy = {version = "0.10.3", features = ["serde"]}
+secrecy = { version = "0.10.3", features = ["serde"] }
+tracing-actix-web = "0.7.22"
 
 [dev-dependencies]
 reqwest = "0.13"

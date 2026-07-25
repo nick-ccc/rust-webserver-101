@@ -1,11 +1,16 @@
-use env_logger::Env;
 use std::fmt::{Debug, Display};
 use tokio::task::JoinError;
-use trsws::{configuration::get_configuration, startup::Application};
+use tracing_subscriber::EnvFilter;
+use trsws::{
+    configuration::get_configuration,
+    startup::Application,
+    telemetry::{get_subscriber, init_subscriber},
+};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    let subscriber = get_subscriber("testWebServer".into(), "info".into(), std::io::stdout);
+    init_subscriber(subscriber);
 
     let configuration = get_configuration().expect("FAILED to read configuration file");
     let application = Application::build(configuration.clone()).await?;

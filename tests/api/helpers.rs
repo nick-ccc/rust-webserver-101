@@ -1,5 +1,6 @@
 use std::sync::LazyLock;
 
+use secrecy::SecretString;
 use sqlx::PgPool;
 use sqlx::{Connection, Executor, PgConnection};
 use trsws::configuration::{DatabaseSettings, get_configuration};
@@ -25,7 +26,7 @@ pub struct TestApp {
     pub port: u16,
     pub db_pool: PgPool,
     pub api_client: reqwest::Client,
-} 
+}
 
 impl TestApp {
     pub async fn post_subscriptions(&self, body: String) -> reqwest::Response {
@@ -71,7 +72,7 @@ async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let maintenance_settings = DatabaseSettings {
         database_name: "postgres".to_string(),
         username: "postgres".to_string(),
-        password: "password".to_string(),
+        password: SecretString::new("password".to_string().into()),
         ..config.clone()
     };
     let mut connection = PgConnection::connect_with(&maintenance_settings.connect_options())

@@ -89,14 +89,12 @@ pub async fn insert_subscriber(
         form.name,
         Utc::now(),
     );
-    transaction.execute(query)
-        .await
-        .map_err(|e| {
-            // if there is duplicate key this throws err -> could be better 
-            // to redo as warn
-            tracing::error!("Failed to execute query: {:?}", e);
-            e
-        })?;
+    transaction.execute(query).await.map_err(|e| {
+        // if there is duplicate key this throws err -> could be better
+        // to redo as warn
+        tracing::error!("Failed to execute query: {:?}", e);
+        e
+    })?;
 
     Ok(subscriber_id)
 }
