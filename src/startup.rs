@@ -38,8 +38,9 @@ impl Application {
 }
 
 pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
-    // todo come back to this
-    PgPoolOptions::new().connect_lazy_with(configuration.connect_options())
+    PgPoolOptions::new()
+        .acquire_timeout(std::time::Duration::from_secs(2))
+        .connect_lazy_with(configuration.connect_options())
 }
 
 async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::Error> {

@@ -1,3 +1,4 @@
+use crate::domains::{NewSubscriber, SubscriberEmail, SubscriberName};
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError, web};
 use anyhow::Context;
@@ -22,6 +23,16 @@ pub fn error_chain_fmt(
 pub struct FormData {
     email: String,
     name: String,
+}
+
+impl TryFrom<FormData> for NewSubscriber {
+    type Error = String;
+
+    fn try_from(value: FormData) -> Result<Self, Self::Error> {
+        let name = SubscriberName::parse(value.name)?;
+        let email = SubscriberEmail::parse(value.email)?;
+        Ok(Self { email, name })
+    }
 }
 
 #[derive(thiserror::Error)]
@@ -59,11 +70,12 @@ pub async fn subscribe(
     form: web::Form<FormData>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, SubscribeError> {
+    let new_subscriber = form.0.try_into().map_err(SubscribeError::ValidationError)?;
     let mut transaction = pool
         .begin()
         .await
         .context("Failed to acquire a Postgres connection from the pool")?;
-    let subsriber_id = insert_subscriber(form, &mut transaction)
+    let subsriber_id = insert_subscriber(&new_subscriber, &mut transaction)
         .await
         .context("Failed to insert new subscriber into database")?;
     transaction.commit().await.unwrap(); // todo!
@@ -72,10 +84,10 @@ pub async fn subscribe(
 
 #[tracing::instrument(
     name = "Saving new subscriber details in the database",
-    skip(form, transaction)
+    skip(new_subscriber, transaction)
 )]
 pub async fn insert_subscriber(
-    form: web::Form<FormData>,
+    new_subscriber: &NewSubscriber,
     transaction: &mut Transaction<'_, Postgres>,
 ) -> Result<Uuid, sqlx::Error> {
     let subscriber_id = Uuid::new_v4();
@@ -85,8 +97,8 @@ pub async fn insert_subscriber(
         VALUES ($1, $2, $3, $4)
         "#,
         subscriber_id,
-        form.email,
-        form.name,
+        new_subscriber.email.as_ref(),
+        new_subscriber.name.as_ref(),
         Utc::now(),
     );
     transaction.execute(query).await.map_err(|e| {

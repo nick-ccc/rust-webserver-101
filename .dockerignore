@@ -1,0 +1,20 @@
+# Git 
+.git
+.github
+.gitignore
+
+# artifacts/Code 
+target/
+tests/
+migrations/
+
+# Deployment
+Dockerfile
+
+# nix
+flake.*
+
+# text
+LICESNESE
+Makefile
+README.md
