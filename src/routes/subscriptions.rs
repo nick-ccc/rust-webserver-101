@@ -75,7 +75,7 @@ pub async fn subscribe(
         .begin()
         .await
         .context("Failed to acquire a Postgres connection from the pool")?;
-    let subsriber_id = insert_subscriber(&new_subscriber, &mut transaction)
+    let _subsriber_id = insert_subscriber(&new_subscriber, &mut transaction)
         .await
         .context("Failed to insert new subscriber into database")?;
     transaction.commit().await.unwrap(); // todo!
