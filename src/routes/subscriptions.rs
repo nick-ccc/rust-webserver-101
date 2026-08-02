@@ -25,6 +25,7 @@ pub struct FormData {
     name: String,
 }
 
+
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
 
@@ -39,7 +40,14 @@ impl TryFrom<FormData> for NewSubscriber {
 pub enum SubscribeError {
     #[error("{0}")]
     ValidationError(String),
-    #[error(transparent)]
+    #[error(transparent)] // this (transparent) uses display of underlying error
+    // This is twofold:
+    // anyhow here can be used ince it is designed to wrap our errors
+    // thiserror uses the #[from] macro to convert the anyhow into a
+    // SubscriberError (<impl From<anyhow::Error> for SubscribeError)
+    // So order is:
+    // <some error here> -> Into<anyhow::Error> -> anyhow:Error -> Into<SubscribeError> ->
+    // SubscribeError::Anyhow
     UnexpectedError(#[from] anyhow::Error),
 }
 

@@ -35,9 +35,7 @@ RUN cargo build \
   --target x86_64-unknown-linux-musl \
   --bin trsws
 
-# This ends up around 90MB which is good but not excellent
-# we could get around this by using a rust musl compliant deployment
-# and the using a scrathc image
+# This ends up around ~10MiB using scratch!
 FROM scratch AS runtime
 WORKDIR /app
 
