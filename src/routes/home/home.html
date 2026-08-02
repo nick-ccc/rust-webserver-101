@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test API">
+    <title>Test API</title>
+
+<style>
+    :root {
+        --bg: #0a0b0b;
+        --panel: #0e1010;
+        --border: #242727;
+        --border-bright: #343838;
+
+        --text: #e8eae7;
+        --muted: #858b87;
+        --dim: #555b58;
+
+        --green: #9acb3c;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        background: var(--bg);
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+
+        font-family:
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+
+        background-image:
+            linear-gradient(
+                rgba(255, 255, 255, 0.018) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.018) 1px,
+                transparent 1px
+            );
+
+        background-size: 48px 48px;
+
+        mask-image: linear-gradient(
+            to bottom,
+            black 0%,
+            transparent 85%
+        );
+    }
+
+    .container {
+        width: min(1180px, calc(100% - 48px));
+        margin: 0 auto;
+    }
+
+    /* -------------------- NAV -------------------- */
+
+    nav {
+        height: 84px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+    }
+
+    .mark {
+        width: 20px;
+        height: 20px;
+
+        border: 1px solid var(--green);
+        position: relative;
+    }
+
+    .mark::after {
+        content: "";
+
+        position: absolute;
+        left: 5px;
+        top: 5px;
+
+        width: 8px;
+        height: 8px;
+
+        background: var(--green);
+    }
+
+    .nav-meta {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    /* -------------------- HERO -------------------- */
+
+    main {
+        padding: 120px 0 100px;
+    }
+
+    .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 28px;
+
+        color: var(--green);
+
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: 600;
+
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+        content: "";
+
+        width: 28px;
+        height: 1px;
+
+        background: var(--green);
+    }
+
+    h1 {
+        max-width: 850px;
+
+        margin: 0;
+
+        color: var(--text);
+
+        font-size: clamp(48px, 7vw, 88px);
+        line-height: 0.98;
+
+        letter-spacing: -0.055em;
+        font-weight: 650;
+    }
+
+    .description {
+        max-width: 570px;
+
+        margin: 30px 0 0;
+
+        color: var(--muted);
+
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    /* -------------------- STATUS -------------------- */
+
+    .status-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        margin-top: 46px;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+
+        padding: 8px 11px;
+
+        border: 1px solid var(--border-bright);
+        background: var(--panel);
+
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+
+        background: var(--green);
+
+        box-shadow: 0 0 8px rgba(154, 203, 60, 0.5);
+    }
+
+    .built-with {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 10px;
+
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .ferris {
+        width: 27px;
+        height: 27px;
+
+        object-fit: contain;
+
+        opacity: 0.85;
+        filter: grayscale(0.15);
+    }
+
+    /* -------------------- API PANEL -------------------- */
+
+    .api-panel {
+        margin-top: 90px;
+
+        border-top: 1px solid var(--border);
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 18px 0;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+        color: var(--muted);
+
+        font-family: monospace;
+        font-size: 10px;
+
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+    }
+
+    .panel-id {
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 10px;
+    }
+
+    .endpoint {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        align-items: center;
+
+        min-height: 110px;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .method {
+        color: var(--green);
+
+        font-family: monospace;
+        font-size: 12px;
+        font-weight: 700;
+
+        letter-spacing: 0.08em;
+    }
+
+    .path {
+        font-family: monospace;
+        font-size: 15px;
+        color: var(--text);
+    }
+
+    .description-small {
+        margin-top: 6px;
+
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 11px;
+    }
+
+    .response {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        color: var(--muted);
+
+        font-family: monospace;
+        font-size: 11px;
+    }
+
+    .response-code {
+        color: var(--green);
+    }
+
+    /* -------------------- TERMINAL -------------------- */
+
+    .terminal {
+        margin-top: 38px;
+
+        border: 1px solid var(--border);
+        background: #080909;
+    }
+
+    .terminal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 12px 16px;
+
+        border-bottom: 1px solid var(--border);
+
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 10px;
+
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    pre {
+        margin: 0;
+        padding: 24px;
+
+        overflow-x: auto;
+
+        color: #aeb3ae;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            "Liberation Mono",
+            monospace;
+
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .prompt {
+        color: var(--green);
+    }
+
+    .command {
+        color: var(--text);
+    }
+
+    .ok {
+        color: var(--green);
+    }
+
+    /* -------------------- FOOTER -------------------- */
+
+    footer {
+        display: flex;
+        justify-content: space-between;
+
+        padding: 25px 0;
+
+        border-top: 1px solid var(--border);
+
+        color: var(--dim);
+
+        font-family: monospace;
+        font-size: 10px;
+
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    /* -------------------- MOBILE -------------------- */
+
+    @media (max-width: 700px) {
+        .container {
+            width: min(100% - 28px, 1180px);
+        }
+
+        nav {
+            height: 70px;
+        }
+
+        .nav-meta {
+            display: none;
+        }
+
+        main {
+            padding: 80px 0 70px;
+        }
+
+        h1 {
+            font-size: clamp(44px, 14vw, 68px);
+        }
+
+        .description {
+            font-size: 15px;
+        }
+
+        .api-panel {
+            margin-top: 65px;
+        }
+
+        .endpoint {
+            grid-template-columns: 80px 1fr;
+            padding: 22px 0;
+        }
+
+        .response {
+            grid-column: 2;
+            margin-top: 12px;
+        }
+
+        footer {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+    <div class="container">
+
+    <nav>
+        <div class="brand">
+            <a href="https://github.com/nick-ccc"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="GitHub"
+               class="github-link">
+
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.8 1.3 3.48.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12C24 5.37 18.63 0 12 0z"/>
+                </svg>
+            </a>
+            <span>@nick-ccc</span>
+        </div>
+
+        <div class="nav-meta">
+            <span>V1.0.0</span>
+        </div>
+    </nav>
+
+    <main>
+
+        <div class="eyebrow">
+            Simple API Template
+        </div>
+
+        <h1>
+            Welcome to<br>
+            the test API.
+        </h1>
+
+        <p class="description">
+            A lightweight service interface for testing,
+            experimentation, and integration.
+        </p>
+
+        <div class="status-row">
+
+            <div class="status">
+                <span class="status-dot"></span>
+                Operational
+            </div>
+
+            <div class="built-with">
+                <img
+                    class="ferris"
+                    src="https://rustacean.net/assets/rustacean-flat-happy.png"
+                    alt="Ferris, the Rust mascot"
+                >
+                Built with Rust
+            </div>
+
+        </div>
+
+        <section class="api-panel">
+
+            <div class="panel-header">
+                <span class="panel-title">
+                    Available Endpoints
+                </span>
+
+                <span class="panel-id">
+                    API / 001
+                </span>
+            </div>
+
+            <div class="endpoint">
+
+                <div class="method">
+                    GET
+                </div>
+
+                <div>
+                    <div class="path">
+                        /health_check
+                    </div>
+
+                    <div class="description-small">
+                        Service availability check
+                    </div>
+                </div>
+
+                <div class="response">
+                    RESPONSE
+                    <span class="response-code">200 OK</span>
+                </div>
+
+            </div>
+
+            <div class="terminal">
+
+                <div class="terminal-header">
+                    <span>Request</span>
+                    <span>HTTP</span>
+                </div>
+
+                <pre><span class="prompt">$</span> <span class="command">curl -i localhost:8000/health_check</span>
+
+HTTP/1.1 <span class="ok">200 OK</span>
+Content-Type: application/json
+
+<span class="ok">{
+"status": "ok"
+}</span></pre>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <a href="https://github.com/nick-ccc"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="GitHub"
+           class="github-link">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.8 1.3 3.48.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12C24 5.37 18.63 0 12 0z"/>
+            </svg>
+        </a>
+    </footer>
+
+</div>
+
+</body>
+</html>
+

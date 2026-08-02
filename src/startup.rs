@@ -1,6 +1,9 @@
 use crate::configuration::{DatabaseSettings, Settings};
-use crate::routes::{health_check, subscribe};
-
+use crate::routes::{
+    health_check, 
+    subscribe,
+    home,
+};
 use actix_web::dev::Server;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer, web};
@@ -51,6 +54,7 @@ async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::E
     let server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
+            .route("/", web::get().to(home))
             // .route("/", web.get().to(home))
             .route("/health_check", web::get().to(health_check))
             .route("/subscriptions", web::post().to(subscribe))
@@ -58,6 +62,5 @@ async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::E
     })
     .listen(listener)?
     .run();
-
     Ok(server)
 }
